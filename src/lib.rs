@@ -1,3 +1,5 @@
+//npx http-server
+
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
