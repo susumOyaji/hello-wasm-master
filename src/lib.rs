@@ -5,18 +5,18 @@ use serde_wasm_bindgen::to_value;
 use web_sys::{HtmlElement, Request, RequestInit, RequestMode, Response};
 use wasm_bindgen_futures::JsFuture;
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 struct ExtractedData {
-    title: String,
-    items: Vec<String>,
+    pub title: String,
+    pub items: Vec<String>,
 }
 
 #[wasm_bindgen]
 pub async fn fetch_and_parse_html(url: &str) -> Result<JsValue, JsValue> {
     // リクエストを作成
-    let mut opts = RequestInit::new();
-    opts.method("GET");
-    opts.mode(RequestMode::Cors); // CORS に注意
+    let opts = RequestInit::new();
+    opts.set_method("GET");
+    opts.set_mode(RequestMode::Cors); // CORS に注意
 
     let request = Request::new_with_str_and_init(url, &opts)?;
 
