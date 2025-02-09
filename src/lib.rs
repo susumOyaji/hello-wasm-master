@@ -3,6 +3,8 @@ use wasm_bindgen::JsCast;
 use serde::Serialize;
 use serde_wasm_bindgen::to_value;
 use web_sys::{HtmlElement};
+use web_sys::{Request, RequestInit, RequestMode, Response};
+use wasm_bindgen_futures::JsFuture;
 
 #[derive(Serialize)]
 struct ExtractedData {
@@ -11,7 +13,20 @@ struct ExtractedData {
 }
 
 #[wasm_bindgen]
-pub fn extract_shopping_keywords(html: &str) -> Result<JsValue, JsValue> {
+pub fn fetch_and_parse_html(url: &str) -> Result<JsValue, JsValue> {
+
+     // リクエストを作成
+     let opts = RequestInit::new();
+     opts.method("GET");
+     opts.mode(RequestMode::Cors); // CORS に注意
+ 
+     let request = Request::new_with_str_and_init(&url, &opts)?;
+ 
+     // fetch API を呼び出す
+     let window = web_sys::window().unwrap();
+     let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
+ 
+ 
     let window = web_sys::window().ok_or("No global `window` exists")?;
     let document = window.document().ok_or("Should have a document on window")?;
     

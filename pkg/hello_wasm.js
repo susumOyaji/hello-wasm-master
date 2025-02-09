@@ -111,10 +111,10 @@ function takeFromExternrefTable0(idx) {
  * @param {string} html
  * @returns {any}
  */
-export function extract_shopping_keywords(html) {
+export function fetch_and_parse_html(html) {
     const ptr0 = passStringToWasm0(html, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len0 = WASM_VECTOR_LEN;
-    const ret = wasm.extract_shopping_keywords(ptr0, len0);
+    const ret = wasm.fetch_and_parse_html(ptr0, len0);
     if (ret[2]) {
         throw takeFromExternrefTable0(ret[1]);
     }
