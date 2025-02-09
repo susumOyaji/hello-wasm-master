@@ -4,6 +4,13 @@
     // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+         {
+            "type": "safari",
+            "request": "launch",
+            "name": "Launch Safari",
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceFolder}"
+        },
         {
             "type": "chrome",
             "request": "launch",

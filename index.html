@@ -1,23 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <title>Hello, WebAssembly!</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rust WASM Scraper</title>
 </head>
-
 <body>
-    <div id="app"></div>
+    <h1>Rust WASM Web Scraper</h1>
+    <button onclick="scrape()">スクレイピング開始</button>
+    <pre id="output"></pre>
 
     <script type="module">
-        import init, {fibonacci, fizzbuzz} from './pkg/hello_wasm.js';
-        async function run() {
-            await init();
+        import init, { fetch_and_parse_html } from "./pkg/wasm_scraper.js";
 
-            console.log( fibonacci(8) );
-            console.log( fizzbuzz(10) );
-        };
-        run();
+        async function scrape() {
+            await init();
+            let url = "https://yoshizo.hatenablog.com/entry/microsoft-rewards-search-keyword-list/#movie";  // スクレイピング対象のURL
+
+            try {
+                let result = await fetch_and_parse_html(url); // Rust WASM で HTML を取得＆解析
+
+                console.log("解析結果:", result);
+
+                // 画面に表示
+                document.getElementById("output").textContent = JSON.stringify(result, null, 2);
+            } catch (err) {
+                console.error("スクレイピングエラー:", err);
+            }
+        }
     </script>
 </body>
 </html>

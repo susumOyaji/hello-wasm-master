@@ -1,80 +1,43 @@
-//npx http-server
-//npx http-server
-
-
 use wasm_bindgen::prelude::*;
-use wasm_bindgen_futures::spawn_local;
-use web_sys::{Request, RequestInit, RequestMode, Response};
-use wasm_bindgen_futures::JsFuture;
+use wasm_bindgen::JsCast;
+use serde::Serialize;
+use serde_wasm_bindgen::to_value;
+use web_sys::{HtmlElement};
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace=console)]
-    fn log(s: &str);
+#[derive(Serialize)]
+struct ExtractedData {
+    title: String,
+    items: Vec<String>,
 }
 
 #[wasm_bindgen]
-pub fn fibonacci(n: u32) -> u32 {
-    match n {
-        0 => 0,
-        1 => 1,
-        n => fibonacci(n-1) + fibonacci(n-2),
+pub fn extract_shopping_keywords(html: &str) -> Result<JsValue, JsValue> {
+    let window = web_sys::window().ok_or("No global `window` exists")?;
+    let document = window.document().ok_or("Should have a document on window")?;
+    
+    let parser = document
+        .create_element("div")?
+        .dyn_into::<HtmlElement>()?;
+    parser.set_inner_html(html);
+    
+    let mut extracted = ExtractedData {
+        title: String::new(),
+        items: vec![],
+    };
+
+    if let Some(title_elem) = parser.query_selector("b")? {
+        extracted.title = title_elem.text_content().unwrap_or_default();
     }
-}
 
-#[wasm_bindgen]
-pub fn fizzbuzz(n: u32) -> String {
-    match (n%3, n%5) {
-        (0, 0) => "FizzBuzz".to_string(),
-        (0, _) => "Fizz".to_string(),
-        (_, 0) => "Buzz".to_string(),
-        (_, _) => n.to_string(),
-    }
-}
-
-async fn fetch_data(url: &str) -> Result<String, JsValue> {
-    let opts = RequestInit::new();
-    opts.set_method("GET");
-    opts.set_mode(RequestMode::Cors);
-
-    let request = Request::new_with_str_and_init(url, &opts)?;
-    let window = web_sys::window().unwrap();
-    let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
-    let resp: Response = resp_value.dyn_into().unwrap();
-
-    let text = JsFuture::from(resp.text()?).await?;
-    Ok(text.as_string().unwrap())
-}
-
-#[wasm_bindgen(start)]
-pub fn run() {
-    log("Hello, world!");
-
-    let window = web_sys::window().unwrap();
-    let document = window.document().unwrap();
-
-    let app = document.get_element_by_id("app").unwrap();
-    app.set_inner_html("Hello from Rust!");
-
-    let p = document.create_element("p").unwrap();
-    p.set_inner_html("色は匂へど散りぬるをsample");
-    app.append_child(&p).unwrap();
-
-
-
-    // スクレイピングの実行
-    let url = "https://yoshizo.hatenablog.com/entry/microsoft-rewards-search-keyword-list/#movie";
-    spawn_local(async move {
-        match fetch_data(url).await {
-            Ok(data) => {
-                let p = document.create_element("b").unwrap();
-                p.set_inner_html(&data);
-                app.append_child(&p).unwrap();
-
-                // pの内容をコンソールに出力
-                log(&p.inner_html());
+    if let Some(ul_elem) = parser.query_selector("ul")? {
+        let list_items = ul_elem.query_selector_all("li")?;
+        for i in 0..list_items.length() {
+            if let Some(li) = list_items.item(i) {
+                extracted.items.push(li.text_content().unwrap_or_default());
             }
-            Err(err) => log(&format!("Error wasm: {:?}", err)),
         }
-    });
+    }
+
+    // `serde-wasm-bindgen` を使用して `JsValue` に変換
+    Ok(to_value(&extracted).map_err(|e| JsValue::from_str(&e.to_string()))?)
 }
