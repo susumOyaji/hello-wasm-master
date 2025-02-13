@@ -1,14 +1,15 @@
 use wasm_bindgen::prelude::*;
 use web_sys::{Request, RequestInit, RequestMode, Response};
 use scraper::{Html, Selector, ElementRef};
-use serde::{Serialize};
+//use serde::Serialize;
+use serde::{Serialize,Deserialize};
 use wasm_bindgen_futures::JsFuture;
 use js_sys::{Array,Reflect};
 use serde_wasm_bindgen::to_value;
 
 
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug,Deserialize)]
 pub struct Article {
     title: String,
     urls: Vec<String>,
@@ -74,6 +75,12 @@ pub async fn fetch_movie_keywords() -> Result<JsValue, JsValue> {
     }
 
     // Vec<Article> を JsValue に変換
+    let js_articles = JsValue::from_serde(&articles).unwrap();
+    // 新コード
+    //use gloo_utils::format::JsValueSerdeExt;
+    //let js_articles =JsValue::from_serde(&articles).unwrap();
+    //let value = your_data.into_js_value();
+    //use wasm_bindgen::to_value;
     let js_articles = to_value(&articles).unwrap();
     Ok(js_articles)
 }
