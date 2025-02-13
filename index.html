@@ -3,34 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rust WASM Scraper</title>
+    <title>microsoft-rewards-search-keyword-list</title>
+    <style>
+        body {
+            font-size: 12px; /* bodyタグの文字サイズを指定 */
+        }
+        h1 {
+            font-size: 32px; /* h1タグの文字サイズを指定 */
+        }
+        h2 {
+            font-size: 16px; /* h2タグの文字サイズを指定 */
+            margin-bottom: 0px; /* h2タグの下側のマージンを指定 */
+            color: #0011ff; /* h2タグの文字色を青に指定 */
+        }
+        p {
+            font-size: 14px; /* pタグの文字サイズを指定 */
+        }
+    </style>
 </head>
 <body>
-    <h1>Rust WASM Web Scraper1</h1>
- 
-    <button id="scrape-button">スクレイピング開始</button>
-    <pre id="output"></pre>
-
+    <h1>Rewards Search Keyword</h1>
     <script type="module">
-        import init, { fetch_and_parse_html } from "./pkg/hello_wasm.js";
+        import init from './pkg/wasm_scraper.js';
 
-        async function scrape() {
-            try {
-                await init();
-                let url = "https://yoshizo.hatenablog.com/entry/microsoft-rewards-search-keyword-list/#movie";  // スクレイピング対象のURL
-
-                let result = await fetch_and_parse_html(url); // Rust WASM で HTML を取得＆解析
-
-                console.log("解析結果:", result);
-
-                // 画面に表示
-                document.getElementById("output").textContent = JSON.stringify(result, null, 2);
-            } catch (err) {
-                console.error("スクレイピングエラー:", err);
-                document.getElementById("output").textContent = "スクレイピングエラー: " + err.message;
-            }
+        async function run() {
+            // Wasmの初期化
+            await init();
+            // Rustのmain関数を呼び出す
+            await main();
         }
-        document.getElementById("scrape-button").addEventListener("click", scrape);
+
+        run();
     </script>
 </body>
 </html>
