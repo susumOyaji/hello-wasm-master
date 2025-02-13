@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>microsoft-rewards-search-keyword-list</title>
+    <title>rewards-search</title>
     <style>
         body {
             font-size: 12px; /* bodyタグの文字サイズを指定 */
@@ -27,9 +27,9 @@
         import init from './pkg/hello_wasm.js';
 
         async function run() {
-            // Wasmの初期化
+            /* Wasmの初期化*/
             await init();
-            // Rustのmain関数を呼び出す
+            /* Rustのmain関数を呼び出す*/
             await main();
         }
 
