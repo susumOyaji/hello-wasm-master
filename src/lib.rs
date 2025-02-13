@@ -81,7 +81,7 @@ pub async fn fetch_movie_keywords() -> Result<JsValue, JsValue> {
     //let js_articles =JsValue::from_serde(&articles).unwrap();
     //let value = your_data.into_js_value();
     //use wasm_bindgen::to_value;
-    let js_articles = to_value(&articles).unwrap();
+    //let js_articles = to_value(&articles).unwrap();
     Ok(js_articles)
 }
 
