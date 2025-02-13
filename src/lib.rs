@@ -1,7 +1,6 @@
 use wasm_bindgen::prelude::*;
 use web_sys::{Request, RequestInit, RequestMode, Response};
 use scraper::{Html, Selector, ElementRef};
-//use serde::Serialize;
 use serde::{Serialize};
 use wasm_bindgen_futures::JsFuture;
 use js_sys::{Array,Reflect};
