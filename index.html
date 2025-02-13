@@ -30,7 +30,10 @@
             /* Wasmの初期化*/
             await init();
             /* Rustのmain関数を呼び出す*/
-            await main();
+            /*現在のコードでは、main関数に#[wasm_bindgen(start)]アトリビュートが付いているため、
+            Wasmモジュールが初期化されたときに自動的にmain関数が実行されます。
+            そのため、JavaScript側でmain関数を明示的に呼び出す必要はありません。*/
+            /*await main();*/
         }
 
         run();
