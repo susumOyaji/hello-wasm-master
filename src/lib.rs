@@ -1,9 +1,13 @@
 use wasm_bindgen::prelude::*;
 use web_sys::{Request, RequestInit, RequestMode, Response};
 use scraper::{Html, Selector, ElementRef};
-use serde::Serialize;
+//use serde::Serialize;
+use serde::{Serialize};
 use wasm_bindgen_futures::JsFuture;
 use js_sys::{Array,Reflect};
+use serde_wasm_bindgen::to_value;
+
+
 
 #[derive(Serialize, Debug)]
 pub struct Article {
@@ -71,10 +75,7 @@ pub async fn fetch_movie_keywords() -> Result<JsValue, JsValue> {
     }
 
     // Vec<Article> を JsValue に変換
-    let js_articles = JsValue::from_serde(&articles).unwrap();
-    // 新コード
-    //use wasm_bindgen::to_value;
-    //let js_articles = to_value(&articles).unwrap();
+    let js_articles = to_value(&articles).unwrap();
     Ok(js_articles)
 }
 
