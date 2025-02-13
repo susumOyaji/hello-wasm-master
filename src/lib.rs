@@ -1,14 +1,14 @@
 use wasm_bindgen::prelude::*;
 use web_sys::{Request, RequestInit, RequestMode, Response};
 use scraper::{Html, Selector, ElementRef};
-use serde::{Serialize,Deserialize};
+use serde::{Serialize};
 use wasm_bindgen_futures::JsFuture;
 use js_sys::{Array,Reflect};
 use serde_wasm_bindgen::to_value;
 
 
 
-#[derive(Serialize, Debug,Deserialize)]
+#[derive(Serialize, Debug)]
 pub struct Article {
     title: String,
     urls: Vec<String>,
