@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rewards-search</title>
+    <link rel="icon" href="./pkg/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-size: 12px; /* bodyタグの文字サイズを指定 */
+        }
+        h1 {
+            font-size: 32px; /* h1タグの文字サイズを指定 */
+        }
+        h2 {
+            font-size: 16px; /* h2タグの文字サイズを指定 */
+            margin-bottom: 0px; /* h2タグの下側のマージンを指定 */
+            color: #0011ff; /* h2タグの文字色を青に指定 */
+        }
+        p {
+            font-size: 14px; /* pタグの文字サイズを指定 */
+        }
+        /* フローティングボタンのスタイル */
+        .search-container {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease-in-out;
+            width: 150px; /* 初期サイズを小さく */
+            overflow: hidden;
+        }
+
+        .search-container.active {
+            width: 250px; /* 広がる */
+        }   
+
+        .search-input {
+            border: none;
+            outline: none;
+            padding: 8px;
+            width: 200px;
+            font-size: 16px;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .search-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .search-container.active .search-input {
+            opacity: 1;
+        }
+        .spacer {
+            height: 50px; /* 高さを調整 */
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="ページ内検索..." onkeydown="handleKeyPress(event)">
+        <button class="search-button" onclick="startSearch()">🔍</button>
+    </div>
+    <h1>Rewards Search Keyword</h1>
+    <div class="spacer"></div> <!-- 改行の代わりにスペーサーを挿入 -->
+    <script type="module">
+        import init from './pkg/hello_wasm.js';
+
+        async function run() {
+            /* Wasmの初期化*/
+            await init();
+            /* Rustのmain関数を呼び出す*/
+            /*現在のコードでは、main関数に#[wasm_bindgen(start)]アトリビュートが付いているため、
+            Wasmモジュールが初期化されたときに自動的にmain関数が実行されます。
+            そのため、JavaScript側でmain関数を明示的に呼び出す必要はありません。*/
+            /*await main();*/
+        }
+        run();
+
+        let lastSearch = ""; // 前回の検索ワードを保存
+        let lastResult = false; // 検索結果の成否を記録
+
+        function toggleSearch() {
+            const container = document.querySelector('.search-container');
+            const input = document.getElementById('searchInput');
+
+            container.classList.toggle('active');
+
+        if (container.classList.contains('active')) {
+            input.focus(); // 検索フォームが開いたら自動フォーカス
+        }
+        }
+
+        // 🔍 検索開始（成功・失敗のメッセージを表示）
+        function startSearch() {
+            const input = document.getElementById('searchInput');
+            const query = input.value.trim();
+
+    if (query) {
+        let found;
+        if (query !== lastSearch) {
+            // 新しい検索ワードなら最初のマッチを探す
+            found = window.find(query, false, false, true, false, true);
+            lastSearch = query;
+        } else {
+            // 同じワードなら次のマッチを探す
+            found = window.find(query, false, true, true, false, true);
+        }
+
+        if (found) {
+            showMessage("🔍 「" + query + "」が見つかりました！", "success");
+            lastResult = true;
+        } else {
+            showMessage("❌ 「" + query + "」は見つかりませんでした。", "error");
+            lastResult = false;
+        }
+    }
+}
+
+ // Enterキーで検索開始
+ function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                console.log('Key pressed:', event.key);
+                startSearch();
+            }
+        }
+
+// ✅ 検索成功・失敗時のメッセージをページに表示
+function showMessage(msg, type) {
+    let messageBox = document.getElementById("searchMessage");
+    if (!messageBox) {
+        messageBox = document.createElement("div");
+        messageBox.id = "searchMessage";
+        messageBox.style.position = "fixed";
+        messageBox.style.bottom = "60px";
+        messageBox.style.right = "20px";
+        messageBox.style.padding = "10px";
+        messageBox.style.borderRadius = "5px";
+        messageBox.style.color = "white";
+        messageBox.style.fontSize = "14px";
+        messageBox.style.zIndex = "1000";
+        document.body.appendChild(messageBox);
+    }
+
+    messageBox.style.backgroundColor = type === "success" ? "#28a745" : "#dc3545";
+    messageBox.textContent = msg;
+    messageBox.style.display = "block";
+
+    // 3秒後にメッセージを非表示
+    setTimeout(() => {
+        messageBox.style.display = "none";
+    }, 3000);
+
+}
+ // イベントリスナーを追加
+ document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('searchInput').addEventListener('keydown', handleKeyPress);
+        });
+//document.getElementById('searchInput').addEventListener('keydown', handleKeyPress)
+
+       
+    </script>
+</body>
+</html>

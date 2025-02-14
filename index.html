@@ -20,24 +20,176 @@
         p {
             font-size: 14px; /* pタグの文字サイズを指定 */
         }
+        /* フローティングボタンのスタイル */
+        .search-container {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease-in-out;
+            width: 150px; /* 初期サイズを小さく */
+            overflow: hidden;
+        }
+
+        .search-container.active {
+            width: 250px; /* 広がる */
+        }   
+
+        .search-input {
+            border: none;
+            outline: none;
+            padding: 8px;
+            width: 200px;
+            font-size: 16px;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .search-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .search-container.active .search-input {
+            opacity: 1;
+        }
+        .spacer {
+            height: 50px; /* 高さを調整 */
+        }
+        .h2-list {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    position: fixed; /* 固定位置 */
+    top: 20px; /* 上から20px */
+    right: 20px; /* 右から20px */
+    width: 200px; /* 幅を指定 */
+    background-color: white; /* 背景色 */
+    z-index: 1000; /* 他のコンテンツより前に表示 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 少し影をつける */
+}
+
+.h2-item {
+    cursor: pointer;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.h2-item:hover {
+    background-color: #f0f0f0;
+}
+
     </style>
 </head>
 <body>
     <h1>Rewards Search Keyword</h1>
+    <div id="h2-list" class="h2-list"></div> <!-- ここに h2 タグのリストを表示 -->
+
+    
+
     <script type="module">
         import init from './pkg/hello_wasm.js';
 
         async function run() {
-            /* Wasmの初期化*/
             await init();
-            /* Rustのmain関数を呼び出す*/
-            /*現在のコードでは、main関数に#[wasm_bindgen(start)]アトリビュートが付いているため、
-            Wasmモジュールが初期化されたときに自動的にmain関数が実行されます。
-            そのため、JavaScript側でmain関数を明示的に呼び出す必要はありません。*/
-            /*await main();*/
+            //displayH2List(); // h2タグのリストを表示
+            setTimeout(displayH2List, 100); // `<h2>` をリスト化 (少し遅延して実行)
+        }
+        run();
+
+        function displayH2List() {
+            const h2Elements = document.querySelectorAll("h2");
+            const listContainer = document.getElementById("h2-list");
+            listContainer.innerHTML = "<h3>🔍 キーワードを選択:</h3>";
+
+            h2Elements.forEach(h2 => {
+                let listItem = document.createElement("div");
+                listItem.textContent = h2.textContent;
+                listItem.classList.add("h2-item");
+                listItem.onclick = () => searchH2(h2.textContent);
+                listContainer.appendChild(listItem);
+            });
         }
 
-        run();
+        function extractBetween(text) {
+            const match = text.match(/『(.*?)』から『(.*?)』まで/);
+            if (match) {
+                return match[0]; // 『から』までの部分をそのまま取得
+            }
+            return null;
+        }
+
+        
+        function searchH2(keyword) {
+            let found = false;
+            document.querySelectorAll("h2").forEach(h2 => {
+                if (h2.textContent === keyword) {
+                    h2.classList.add("highlight");
+                    h2.scrollIntoView({ behavior: "smooth", block: "center" });
+                    found = true;
+                } else {
+                    h2.classList.remove("highlight");
+                }
+            });
+
+            showMessage(found ? `🔍 「${keyword}」が見つかりました！` : `❌ 「${keyword}」は見つかりませんでした。`, found ? "success" : "error");
+        }
+
+        function showMessage(msg, type) {
+            let messageBox = document.getElementById("searchMessage");
+            if (!messageBox) {
+                messageBox = document.createElement("div");
+                messageBox.id = "searchMessage";
+                messageBox.style.position = "fixed";
+                messageBox.style.bottom = "60px";
+                messageBox.style.right = "20px";
+                messageBox.style.padding = "10px";
+                messageBox.style.borderRadius = "5px";
+                messageBox.style.color = "white";
+                messageBox.style.fontSize = "14px";
+                messageBox.style.zIndex = "1000";
+                document.body.appendChild(messageBox);
+            }
+
+            messageBox.style.backgroundColor = type === "success" ? "#28a745" : "#dc3545";
+            messageBox.textContent = msg;
+            messageBox.style.display = "block";
+
+            setTimeout(() => {
+                messageBox.style.display = "none";
+            }, 3000);
+        }
     </script>
+
+    <style>
+        .h2-list {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .h2-item {
+            cursor: pointer;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .h2-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
 </body>
 </html>
