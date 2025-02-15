@@ -17,6 +17,12 @@
             margin-bottom: 0px; /* h2タグの下側のマージンを指定 */
             color: #0011ff; /* h2タグの文字色を青に指定 */
         }
+        h3 {
+            font-size: 16px; /* h2タグの文字サイズを指定 */
+            margin-top: 0px; /* h2タグの下側のマージンを指定 */
+            margin-bottom: 0px; /* h2タグの下側のマージンを指定 */
+            color: #0011ff;; /* h2タグの文字色を青に指定 */
+        }
         p {
             font-size: 14px; /* pタグの文字サイズを指定 */
         }
@@ -66,27 +72,29 @@
             height: 50px; /* 高さを調整 */
         }
         .h2-list {
-    padding: 10px;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
-    position: fixed; /* 固定位置 */
-    top: 20px; /* 上から20px */
-    right: 20px; /* 右から20px */
-    width: 200px; /* 幅を指定 */
-    background-color: white; /* 背景色 */
-    z-index: 1000; /* 他のコンテンツより前に表示 */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 少し影をつける */
-}
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            position: fixed; /* 固定位置 */
+            top: 20px; /* 上から20px */
+            right: 20px; /* 右から20px */
+            width: 350px; /* 幅を指定 */
+            max-height: 500px; /* 最大高さを指定（適宜調整） */
+            overflow: auto; /* はみ出したらスクロール可能に */
+            background-color: white; /* 背景色 */
+            z-index: 1000; /* 他のコンテンツより前に表示 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 少し影をつける */
+        }
 
-.h2-item {
-    cursor: pointer;
-    padding: 5px;
-    border-bottom: 1px solid #ddd;
-}
+        .h2-item {
+            cursor: pointer;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
 
-.h2-item:hover {
-    background-color: #f0f0f0;
-}
+        .h2-item:hover {
+            background-color: #f0f0f0;
+        }
 
     </style>
 </head>
@@ -101,8 +109,15 @@
 
         async function run() {
             await init();
-            //displayH2List(); // h2タグのリストを表示
-            setTimeout(displayH2List, 100); // `<h2>` をリスト化 (少し遅延して実行)
+            const checkH2Loaded = setInterval(() => {
+                if (document.querySelectorAll("h2").length > 0) {
+                    console.log("✅ <h2> タグが表示されました！");
+                    clearInterval(checkH2Loaded);
+                    displayH2List(); // h2タグのリストを表示
+                }
+            }, 500);
+    
+    
         }
         run();
 
@@ -110,22 +125,19 @@
             const h2Elements = document.querySelectorAll("h2");
             const listContainer = document.getElementById("h2-list");
             listContainer.innerHTML = "<h3>🔍 キーワードを選択:</h3>";
-
+           
             h2Elements.forEach(h2 => {
-                let listItem = document.createElement("div");
-                listItem.textContent = h2.textContent;
-                listItem.classList.add("h2-item");
-                listItem.onclick = () => searchH2(h2.textContent);
-                listContainer.appendChild(listItem);
-            });
-        }
+                const text = h2.textContent;
+                const matches = [...text.matchAll(/『.*?』/g)]; // すべての『〇〇』を取得
 
-        function extractBetween(text) {
-            const match = text.match(/『(.*?)』から『(.*?)』まで/);
-            if (match) {
-                return match[0]; // 『から』までの部分をそのまま取得
+            if (matches.length > 0) {
+                let listItem = document.createElement("div");
+                listItem.textContent = matches.map(m => m[0]).join("、"); // すべてのマッチを表示
+                listItem.classList.add("h2-item");
+                listItem.onclick = () => searchH2(text); // 検索はh2の全文で行う
+                listContainer.appendChild(listItem);
             }
-            return null;
+        });
         }
 
         
