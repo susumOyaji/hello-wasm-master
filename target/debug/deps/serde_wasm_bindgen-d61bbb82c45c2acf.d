@@ -1,0 +1,10 @@
+/Users/sumitomoshigeru/Documents/GitHub/hello-wasm-master/target/debug/deps/libserde_wasm_bindgen-d61bbb82c45c2acf.rmeta: /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/lib.rs /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/de.rs /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/error.rs /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/ser.rs
+
+/Users/sumitomoshigeru/Documents/GitHub/hello-wasm-master/target/debug/deps/libserde_wasm_bindgen-d61bbb82c45c2acf.rlib: /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/lib.rs /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/de.rs /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/error.rs /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/ser.rs
+
+/Users/sumitomoshigeru/Documents/GitHub/hello-wasm-master/target/debug/deps/serde_wasm_bindgen-d61bbb82c45c2acf.d: /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/lib.rs /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/de.rs /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/error.rs /Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/ser.rs
+
+/Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/lib.rs:
+/Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/de.rs:
+/Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/error.rs:
+/Users/sumitomoshigeru/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde-wasm-bindgen-0.1.3/src/ser.rs:

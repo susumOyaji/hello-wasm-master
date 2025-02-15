@@ -1,8 +1,4 @@
 
 # Rust関連
-/target/
 /Cargo.lock
-
-# WASMビルド出力
-/pkg/
 
