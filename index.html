@@ -99,6 +99,11 @@
     </style>
 </head>
 <body>
+    <h2>クリップボードのテキストを使って検索</h2>
+    <button onclick="searchFromClipboard()">クリップボード検索</button>
+    <button onclick="getNextElementInBody()">選択された項目の次を取得</button>
+
+
     <h1>Rewards Search Keyword</h1>
     <div id="h2-list" class="h2-list"></div> <!-- ここに h2 タグのリストを表示 -->
 
@@ -106,6 +111,59 @@
 
     <script type="module">
         import init from './pkg/hello_wasm.js';
+
+
+
+        async function searchFromClipboard() {
+            try {
+                // クリップボードのテキストを取得
+                let keywords = await navigator.clipboard.readText();
+                
+                if (keywords.trim()) {
+                    keywords.split(" ").forEach(word => {
+                        window.open("https://www.bing.com/search?q=" + encodeURIComponent(word));
+                    });
+                } else {
+                    alert("クリップボードが空です。");
+                }
+            } catch (err) {
+                alert("クリップボードの読み取りに失敗しました。ブラウザの設定を確認してください。");
+                console.error(err);
+            }
+        }
+        // グローバルスコープに登録
+        window.searchFromClipboard = searchFromClipboard;
+
+        // 選択されたチェックボックスの次の要素を取得
+        // チェックされた h2 の次の要素を取得する
+function getNextElementInBody() {
+    let checkedItems = [];
+    let h2Elements = document.querySelectorAll("h2");
+    let items = document.querySelectorAll(".h2-item");
+
+    items.forEach((item, index) => {
+        let checkbox = item.querySelector("input[type='checkbox']");
+        if (checkbox.checked) {
+            let h2Text = checkbox.nextElementSibling.textContent;
+            
+            // body 内から h2 タグを検索し、次の要素を取得
+            h2Elements.forEach((h2, i) => {
+                if (h2.textContent === h2Text) {
+                    let nextElement = h2.nextElementSibling; // 次の要素を取得
+                    if (nextElement) {
+                        checkedItems.push(`「${h2Text}」の次の要素: ${nextElement.tagName} -> ${nextElement.textContent.trim()}`);
+                    } else {
+                        checkedItems.push(`「${h2Text}」の次に要素がありません`);
+                    }
+                }
+            });
+        }
+    });
+
+    alert(checkedItems.length > 0 ? checkedItems.join("\n") : "選択された項目がありません");
+}
+ // グローバルスコープに登録
+ window.getNextElementInBody = getNextElementInBody;
 
         async function run() {
             await init();
@@ -122,24 +180,29 @@
         run();
 
         function displayH2List() {
-            const h2Elements = document.querySelectorAll("h2");
-            const listContainer = document.getElementById("h2-list");
-            listContainer.innerHTML = "<h3>🔍 キーワードを選択:</h3>";
-           
-            h2Elements.forEach(h2 => {
-                const text = h2.textContent;
-                const matches = [...text.matchAll(/『.*?』/g)]; // すべての『〇〇』を取得
+    const h2Elements = document.querySelectorAll("h2");
+    const listContainer = document.getElementById("h2-list");
+    listContainer.innerHTML = "<h3>🔍 キーワードを選択:</h3>";
 
-            if (matches.length > 0) {
-                let listItem = document.createElement("div");
-                listItem.textContent = matches.map(m => m[0]).join("、"); // すべてのマッチを表示
-                listItem.classList.add("h2-item");
-                listItem.onclick = () => searchH2(text); // 検索はh2の全文で行う
-                listContainer.appendChild(listItem);
-            }
-        });
-        }
+    h2Elements.forEach((h2, index) => {
+        let listItem = document.createElement("div");
+        listItem.classList.add("h2-item");
 
+        // チェックボックスを作成
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.classList.add("h2-checkbox");
+
+        // ラベルを作成
+        let label = document.createElement("span");
+        label.textContent = h2.textContent; // h2のテキストを取得
+
+        // listItem にチェックボックスとテキストを追加
+        listItem.appendChild(checkbox);
+        listItem.appendChild(label);
+        listContainer.appendChild(listItem);
+    });
+}
         
         function searchH2(keyword) {
             let found = false;
