@@ -4,335 +4,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rewards-search</title>
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <title>メインコンテンツのフローティング表示</title>
     <style>
         body {
-            font-size: 12px;
-            /* bodyタグの文字サイズを指定 */
+            font-family: Arial, sans-serif;
+            margin: 20px;
         }
 
-        h1 {
-            font-size: 32px;
-            /* h1タグの文字サイズを指定 */
-        }
-
-        h2 {
-            font-size: 16px;
-            /* h2タグの文字サイズを指定 */
-            margin-bottom: 0px;
-            /* h2タグの下側のマージンを指定 */
-            color: #0011ff;
-            /* h2タグの文字色を青に指定 */
-        }
-
-        h3 {
-            font-size: 16px;
-            /* h2タグの文字サイズを指定 */
-            margin-top: 0px;
-            /* h2タグの下側のマージンを指定 */
-            margin-bottom: 0px;
-            /* h2タグの下側のマージンを指定 */
-            color: #0011ff;
-            ;
-            /* h2タグの文字色を青に指定 */
-        }
-
-        p {
-            font-size: 14px;
-            /* pタグの文字サイズを指定 */
-        }
-
-        /* フローティングボタンのスタイル */
-        .search-container {
+        /* フローティング表示のスタイル */
+        .floating-container {
             position: fixed;
-            top: 80px;
-            left: 20px;
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
+            top: 70px;
+            right: 20px;
+            width: 300px;
+            max-height: 80%;
+            overflow-y: auto;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        /* h2 のスタイル */
+        .floating-container h2,
+        .main-content h2 {
+            font-size: 18px;
+            color: #007bff;
+            margin-top: 20px;
+        }
+
+        /* リストのスタイル */
+        .floating-container ul,
+        .main-content ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .floating-container li {
             display: flex;
             align-items: center;
-            transition: all 0.3s ease-in-out;
-            width: 150px;
-            /* 初期サイズを小さく */
-            overflow: hidden;
+            margin-bottom: 10px;
+            font-size: 15px;
         }
 
-        .search-container.active {
-            width: 250px;
-            /* 広がる */
+        .floating-container input[type="checkbox"] {
+            margin-right: 10px;
         }
 
-        .search-input {
-            border: none;
-            outline: none;
-            padding: 8px;
-            width: 200px;
-            font-size: 16px;
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        .search-button {
-            background: #007bff;
+        /* コピー ボタンのスタイル */
+        .copy-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            font-size: 14px;
+            background-color: #007bff;
             color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: 20px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
         }
 
-        .search-container.active .search-input {
-            opacity: 1;
-        }
-
-        .spacer {
-            height: 50px;
-            /* 高さを調整 */
-        }
-
-        .h2-list {
-            padding: 10px;
-            border: 1px solid #ddd;
-            margin-bottom: 20px;
-            position: fixed;
-            /* 固定位置 */
-            top: 20px;
-            /* 上から20px */
-            right: 20px;
-            /* 右から20px */
-            width: 350px;
-            /* 幅を指定 */
-            max-height: 500px;
-            /* 最大高さを指定（適宜調整） */
-            overflow: auto;
-            /* はみ出したらスクロール可能に */
-            background-color: white;
-            /* 背景色 */
-            z-index: 1000;
-            /* 他のコンテンツより前に表示 */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            /* 少し影をつける */
-        }
-
-        .h2-item {
-            cursor: pointer;
-            padding: 5px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .h2-item:hover {
-            background-color: #f0f0f0;
+        .copy-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 
 <body>
-    <h3>クリップボードのテキストを使って検索</h3>
-    <button onclick="searchFromClipboard()">クリップボード検索</button>
-    <button onclick="getNextElementInBody()">選択された項目の次を取得</button>
 
+    <!-- メインコンテンツ -->
+    <div class="main-content">
+        <h2>おすすめグルメ</h2>
+        <ul>
+            <li>寿司</li>
+            <li>ラーメン</li>
+            <li>天ぷら</li>
+        </ul>
 
-    <h1>Rewards Search Keyword</h1>
-    <div id="h2-list" class="h2-list"></div> <!-- ここに h2 タグのリストを表示 -->
+        <h2>旅行先</h2>
+        <ul>
+            <li>北海道</li>
+            <li>沖縄</li>
+            <li>京都</li>
+        </ul>
 
+        <h2>映画</h2>
+        <ul>
+            <li>アクション映画</li>
+            <li>ドラマ映画</li>
+            <li>コメディ映画</li>
+        </ul>
+        <h2>上記でポイントが反映されなかったら</h2>
+        <ul>
+            <li>beat it lyrics michael jackson</li>
 
+        </ul>
+    </div>
 
-    <script type="module">
-        import init from './pkg/hello_wasm.js';
+    <!-- フローティング表示 -->
+    <div class="floating-container" id="floating-content">
+        <h2>メニュー</h2>
+        <div id="floating-body"></div>
+    </div>
 
+    <!-- コピー ボタン -->
+    <button class="copy-button" onclick="copyCheckedItems()">コピー</button>
 
+    <script>
+        function updateFloatingContent() {
+            const floatingBody = document.getElementById('floating-body');
+            floatingBody.innerHTML = ''; // フローティングコンテンツをクリア
 
-        async function searchFromClipboard() {
-            try {
-                // クリップボードのテキストを取得
-                let keywords = await navigator.clipboard.readText();
+            // メインコンテンツ内の h2 と ul を取得
+            const sections = document.querySelectorAll('.main-content h2');
 
-                if (keywords.trim()) {
-                    keywords.split(" ").forEach(word => {
-                        window.open("https://www.bing.com/search?q=" + encodeURIComponent(word));
+            sections.forEach(h2 => {
+                // h2 見出しを追加
+                const floatingH2 = document.createElement('h2');
+                floatingH2.textContent = h2.textContent;
+                floatingBody.appendChild(floatingH2);
+
+                // 次の兄弟要素が <ul> ならリストとして追加
+                let nextElement = h2.nextElementSibling;
+                if (nextElement && nextElement.tagName === 'UL') {
+                    const floatingUl = document.createElement('ul');
+
+                    nextElement.querySelectorAll('li').forEach(item => {
+                        const li = document.createElement('li');
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        const label = document.createElement('label');
+                        label.textContent = item.textContent;
+
+                        li.appendChild(checkbox);
+                        li.appendChild(label);
+                        floatingUl.appendChild(li);
                     });
-                } else {
-                    alert("クリップボードが空です。");
-                }
-            } catch (err) {
-                alert("クリップボードの読み取りに失敗しました。ブラウザの設定を確認してください。");
-                console.error(err);
-            }
-        }
-        // グローバルスコープに登録
-        window.searchFromClipboard = searchFromClipboard;
 
-        // 選択されたチェックボックスの次の要素を取得
-        // チェックされた h2 の次の要素を取得する
-        function getNextElementInBody() {
-            let checkedItems = [];
-            let clipboard = [];
-            let h2Elements = document.querySelectorAll("h2");
-            let items = document.querySelectorAll(".h2-item");
-
-            items.forEach((item, index) => {
-                let checkbox = item.querySelector("input[type='checkbox']");
-                if (checkbox.checked) {
-                    let h2Text = checkbox.nextElementSibling.textContent;
-
-                    // body 内から h2 タグを検索し、次の要素を取得
-                    h2Elements.forEach((h2, i) => {
-                        if (h2.textContent === h2Text) {
-                            let nextElement = h2.nextElementSibling; // 次の要素を取得
-                            if (nextElement) {
-                                checkedItems.push(`「${h2Text}」の次の要素: ${nextElement.tagName} -> ${nextElement.textContent.trim()}`);
-                                clipboard.push(`${nextElement.textContent.trim()}`);
-                            } else {
-                                checkedItems.push(`「${h2Text}」の次に要素がありません`);
-                            }
-                        }
-                    });
+                    floatingBody.appendChild(floatingUl);
                 }
             });
+        }
 
-            alert(checkedItems.length > 0 ? checkedItems.join("\n") : "選択された項目がありません");
+        function copyCheckedItems() {
+            let checkedItems = [];
+            document.querySelectorAll('.floating-container input[type="checkbox"]:checked').forEach(checkbox => {
+                checkedItems.push(checkbox.nextElementSibling.textContent);
+            });
 
-            navigator.clipboard.writeText(clipboard.join("\n"));
-
-            if (clipboard.length > 0) {  // 空配列を防ぐ
-                clipboard.join(" ").split(" ").forEach(word => {
-                    window.open("https://www.bing.com/search?q=" + encodeURIComponent(word));
-                    //alert(`${clipboard.length}:  ${word}:   選択された項目の次の要素。`);
+            if (checkedItems.length > 0) {
+                const textToCopy = checkedItems.join("\n"); // 改行区切りでコピー
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    alert("チェックされた項目をコピーしました:\n" + textToCopy);
+                }).catch(err => {
+                    alert("コピーに失敗しました: " + err);
                 });
             } else {
-                alert("クリップボードが空です。");
+                alert("チェックされた項目がありません。");
             }
-
-        }
-        // グローバルスコープに登録
-        window.getNextElementInBody = getNextElementInBody;
-
-        async function run() {
-            await init();
-            const checkH2Loaded = setInterval(() => {
-                if (document.querySelectorAll("h2").length > 0) {
-                    clearInterval(checkH2Loaded);
-                    displayH2List(); // h2タグのリストを表示
-                }
-            }, 500);
-
-
-        }
-        run();
-
-
-        function extractKeyword(h2Text) {
-            const regex = /『(.*?)』/g; // 鍵括弧付きでテキストを抽出する正規表現
-            const match = h2Text.match(regex);
-            return match ? match[1] : null; // マッチした場合、その中身を返す。マッチしなければ null を返す
         }
 
-        // 使用例
-        const h2Elements = document.querySelectorAll("h2");
-        h2Elements.forEach(h2 => {
-            const keyword = extractKeyword(h2.textContent);
-            if (keyword) {
-                console.log("抽出したキーワード:", keyword);
-            } else {
-                console.log("キーワードが見つかりませんでした");
-            }
-        });
+        // ページ読み込み時にフローティング表示を同期
+        window.onload = function () {
+            updateFloatingContent();
+        };
 
-
-
-
-
-        function displayH2List() {
-            const h2Elements = document.querySelectorAll("h2");
-            const listContainer = document.getElementById("h2-list");
-            listContainer.innerHTML = "<h3>🔍 キーワードを選択:</h3>";
-
-            h2Elements.forEach((h2, index) => {
-                let listItem = document.createElement("div");
-                listItem.classList.add("h2-item");
-
-                // チェックボックスを作成
-                let checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.classList.add("h2-checkbox");
-
-                // ラベルを作成
-                let label = document.createElement("span");
-
-                label.textContent = h2.textContent; // h2のテキストを取得
-
-                // listItem にチェックボックスとテキストを追加
-                listItem.appendChild(checkbox);
-                listItem.appendChild(label);
-                listContainer.appendChild(listItem);
-            });
-        }
-
-        function searchH2(keyword) {
-            let found = false;
-            document.querySelectorAll("h2").forEach(h2 => {
-                if (h2.textContent === keyword) {
-                    h2.classList.add("highlight");
-                    h2.scrollIntoView({ behavior: "smooth", block: "center" });
-                    found = true;
-                } else {
-                    h2.classList.remove("highlight");
-                }
-            });
-
-            showMessage(found ? `🔍 「${keyword}」が見つかりました！` : `❌ 「${keyword}」は見つかりませんでした。`, found ? "success" : "error");
-        }
-
-        function showMessage(msg, type) {
-            let messageBox = document.getElementById("searchMessage");
-            if (!messageBox) {
-                messageBox = document.createElement("div");
-                messageBox.id = "searchMessage";
-                messageBox.style.position = "fixed";
-                messageBox.style.bottom = "60px";
-                messageBox.style.right = "20px";
-                messageBox.style.padding = "10px";
-                messageBox.style.borderRadius = "5px";
-                messageBox.style.color = "white";
-                messageBox.style.fontSize = "14px";
-                messageBox.style.zIndex = "1000";
-                document.body.appendChild(messageBox);
-            }
-
-            messageBox.style.backgroundColor = type === "success" ? "#28a745" : "#dc3545";
-            messageBox.textContent = msg;
-            messageBox.style.display = "block";
-
-            setTimeout(() => {
-                messageBox.style.display = "none";
-            }, 3000);
-        }
+        // メインコンテンツが変更されたときにもフローティング表示を更新
+        const observer = new MutationObserver(updateFloatingContent);
+        observer.observe(document.querySelector('.main-content'), { childList: true, subtree: true });
     </script>
 
-    <style>
-        .h2-list {
-            padding: 10px;
-            border: 1px solid #ddd;
-            margin-bottom: 20px;
-        }
-
-        .h2-item {
-            cursor: pointer;
-            padding: 5px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .h2-item:hover {
-            background-color: #f0f0f0;
-        }
-
-        .highlight {
-            background-color: yellow;
-        }
-    </style>
 </body>
 
 </html>
