@@ -14,7 +14,7 @@
         /* フローティング表示のスタイル */
         .floating-container {
             position: fixed;
-            top: 70px;
+            top: 20px;
             right: 20px;
             width: 300px;
             max-height: 80%;
@@ -52,11 +52,16 @@
             margin-right: 10px;
         }
 
-        /* コピー ボタンのスタイル */
-        .copy-button {
+        /* ボタンのスタイル */
+        .button-container {
             position: fixed;
-            top: 20px;
+            bottom: 20px;
             right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .button-container button {
             padding: 10px 15px;
             font-size: 14px;
             background-color: #007bff;
@@ -66,7 +71,7 @@
             cursor: pointer;
         }
 
-        .copy-button:hover {
+        .button-container button:hover {
             background-color: #0056b3;
         }
     </style>
@@ -96,11 +101,6 @@
             <li>ドラマ映画</li>
             <li>コメディ映画</li>
         </ul>
-        <h2>上記でポイントが反映されなかったら</h2>
-        <ul>
-            <li>beat it lyrics michael jackson</li>
-
-        </ul>
     </div>
 
     <!-- フローティング表示 -->
@@ -109,10 +109,25 @@
         <div id="floating-body"></div>
     </div>
 
-    <!-- コピー ボタン -->
-    <button class="copy-button" onclick="copyCheckedItems()">コピー</button>
+    <!-- ボタン -->
+    <div class="button-container">
+        <button onclick="copyCheckedItems()">コピー</button>
+        <button onclick="searchCheckedItems()">検索</button>
+    </div>
 
-    <script>
+    <h1>Rewards Search Keyword</h1>
+    <div id="h2-list" class="h2-list"></div> <!-- ここに h2 タグのリストを表示 -->
+
+    <script type="module">
+        import init from './pkg/hello_wasm.js';
+
+        async function run() {
+            await init();
+            updateFloatingContent(); // h2タグのリストを表示
+        }
+
+        run();
+
         function updateFloatingContent() {
             const floatingBody = document.getElementById('floating-body');
             floatingBody.innerHTML = ''; // フローティングコンテンツをクリア
@@ -166,14 +181,25 @@
             }
         }
 
-        // ページ読み込み時にフローティング表示を同期
-        window.onload = function () {
-            updateFloatingContent();
-        };
+        function searchCheckedItems() {
+            let checkedItems = [];
+            document.querySelectorAll('.floating-container input[type="checkbox"]:checked').forEach(checkbox => {
+                checkedItems.push(checkbox.nextElementSibling.textContent);
+            });
 
-        // メインコンテンツが変更されたときにもフローティング表示を更新
-        const observer = new MutationObserver(updateFloatingContent);
-        observer.observe(document.querySelector('.main-content'), { childList: true, subtree: true });
+            if (checkedItems.length > 0) {
+                checkedItems.forEach(item => {
+                    const query = encodeURIComponent(item);
+                    const searchUrl = `https://www.bing.com/search?q=${query}`;
+                    window.open(searchUrl, '_blank'); // 各項目ごとに新しいタブで検索
+                });
+            } else {
+                alert("チェックされた項目がありません。");
+            }
+        }
+
+        // ページ読み込み時にフローティング表示を同期
+        window.onload = updateFloatingContent;
     </script>
 
 </body>
