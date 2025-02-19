@@ -119,14 +119,48 @@
     <div id="h2-list" class="h2-list"></div> <!-- ここに h2 タグのリストを表示 -->
 
     <script type="module">
-        import init from './pkg/hello_wasm.js';
+        import init, { fetch_movie_keywords } from './pkg/hello_wasm.js';
 
         async function run() {
             await init();
-            updateFloatingContent(); // h2タグのリストを表示
+            const wasmData = await fetch_movie_keywords();
+            updateFloatingContentWithWasmData(wasmData); // WASMデータをフローティングエリアに表示
         }
 
         run();
+
+        function updateFloatingContentWithWasmData(wasmData) {
+            const floatingBody = document.getElementById('floating-body');
+            floatingBody.innerHTML = ''; // フローティングコンテンツをクリア
+
+            const articles = wasmData;
+
+            articles.forEach(article => {
+                // タイトルを追加
+                const titleElement = document.createElement('h2');
+                titleElement.textContent = article.title;
+                floatingBody.appendChild(titleElement);
+
+                // リストを追加
+                const ulElement = document.createElement('ul');
+                article.urls.forEach(url => {
+                    const liElement = document.createElement('li');
+
+                    // チェックボックスを追加
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    liElement.appendChild(checkbox);
+
+                    // URLテキストを追加
+                    const label = document.createElement('label');
+                    label.textContent = url;
+                    liElement.appendChild(label);
+
+                    ulElement.appendChild(liElement);
+                });
+                floatingBody.appendChild(ulElement);
+            });
+        }
 
         function updateFloatingContent() {
             const floatingBody = document.getElementById('floating-body');
@@ -198,8 +232,15 @@
             }
         }
 
+        // グローバルスコープに登録
+        window.copyCheckedItems = copyCheckedItems;
+        window.searchCheckedItems = searchCheckedItems;
+
         // ページ読み込み時にフローティング表示を同期
-        window.onload = updateFloatingContent;
+        window.onload = () => {
+            updateFloatingContent();
+            run();
+        };
     </script>
 
 </body>
