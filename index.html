@@ -133,6 +133,12 @@
             const floatingBody = document.getElementById('floating-body');
             floatingBody.innerHTML = ''; // フローティングコンテンツをクリア
 
+            // フローティングエリアの先頭に <h1> を追加
+            const floatingContent = document.getElementById('floating-content');
+            const h1Element = document.createElement('h1');
+            h1Element.textContent = 'Rewards Search Keyword';
+            floatingContent.insertBefore(h1Element, floatingBody);
+
             const articles = wasmData;
 
             articles.forEach(article => {
