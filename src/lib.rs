@@ -88,18 +88,14 @@ pub async fn main() -> Result<(), JsValue> {
             let document = window.document().unwrap();
             let body = document.body().unwrap();
 
-            // `data-target` の値を取得
-            let target_id = body
-                .get_attribute("data-target")
-                .unwrap_or_else(|| "body".to_string());
+            // `data-target` の値を取得（設定がない場合は None）
+            let target_id = body.get_attribute("data-target");
 
-            // 指定されたターゲットの要素を取得
-            let target = if target_id == "body" {
-                body.clone().into() // `HtmlElement` を `web_sys::Element` に変換
+            // 指定された `data-target` が存在するか確認
+            let target = if let Some(id) = target_id {
+                document.get_element_by_id(&id).unwrap_or(body.clone().into())
             } else {
-                document
-                    .get_element_by_id(&target_id)
-                    .unwrap_or(body.clone().into()) // `body` を `web_sys::Element` に変換
+                body.clone().into() // `data-target` がない場合は `body` に追加
             };
 
             // JsValue を配列に変換
@@ -118,7 +114,7 @@ pub async fn main() -> Result<(), JsValue> {
                 let list = document.create_element("ul").unwrap();
                 for url in urls_array.iter() {
                     let list_item = document.create_element("li").unwrap();
-                    list_item.set_inner_html(&url.as_string().unwrap());
+                    list_item.set_inner_html(&url.as_string().unwrap()); // チェックボックスを削除
                     list.append_child(&list_item).unwrap();
                 }
                 target.append_child(&list).unwrap();
@@ -130,3 +126,5 @@ pub async fn main() -> Result<(), JsValue> {
     }
     Ok(())
 }
+
+

@@ -8,6 +8,7 @@
     <style>
         body {
             /*display: none;*/
+            font-size: 12px; /* bodyタグの文字サイズを指定 */
         }
 
         #floating-area {
@@ -24,8 +25,23 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
+        #floating-area1 {
+            display: block;
+            position: fixed;
+            top: 20px;
+            right: 420px;
+            width: 350px;
+            max-height: 80%;
+            overflow-y: auto;
+            background-color: rgb(101, 99, 110);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
           /* h2 のスタイル */
-          #floating-area h1 {
+          #floating-area h1,
+          #floating-area1 h1 {
             display: block;
             font-size: 18px;
             color: #f87b07;
@@ -34,7 +50,8 @@
         }
 
         /* h2 のスタイル */
-        #floating-area h2 {
+        #floating-area h2,
+        #floating-area1 h2 {
             display: block;
             font-size: 18px;
             color: #8df505;
@@ -44,13 +61,15 @@
 
         /* リストのスタイル */
         #floating-area ul,
-        .main-content ul {
+        .main-content ul,
+        #floating-area1 ul {
             list-style-type: none;
             padding-left: 0;
             font-size: 12px;
         }
 
-        #floating-area li {
+        #floating-area li,
+        #floating-area1 li {
             display: block;
             display: flex;
             align-items: center;
@@ -100,8 +119,8 @@ data-target がない場合は body に追加
 -->
 
 
-<body data-target="floating-area">
-    <div id="floating-area"></div>
+<body data-target="floating-area1">
+    <div id="floating-area1"></div>
 
 
     <!-- ボタン -->
@@ -123,7 +142,7 @@ data-target がない場合は body に追加
         initialize();
 
         function updateFloatingContentWithWasmData(wasmData) {
-            const floatingBody = document.getElementById('floating-area');
+            const floatingBody = document.getElementById('floating-area1');
             floatingBody.innerHTML = ''; // フローティングエリアのコンテンツをクリア
 
             // フローティングエリアの先頭に <h1> を追加
