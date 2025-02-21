@@ -78,8 +78,6 @@ pub async fn fetch_movie_keywords() -> Result<JsValue, JsValue> {
     Ok(js_articles)
 }
 
-
-
 #[wasm_bindgen(start)]
 pub async fn main() -> Result<(), JsValue> {
     match fetch_movie_keywords().await {
@@ -87,20 +85,6 @@ pub async fn main() -> Result<(), JsValue> {
             let window = web_sys::window().unwrap();
             let document = window.document().unwrap();
             let body = document.body().unwrap();
-
-            // `data-target` の値を取得
-            let target_id = body
-                .get_attribute("data-target")
-                .unwrap_or_else(|| "body".to_string());
-
-            // 指定されたターゲットの要素を取得
-            let target = if target_id == "body" {
-                body.clone().into() // `HtmlElement` を `web_sys::Element` に変換
-            } else {
-                document
-                    .get_element_by_id(&target_id)
-                    .unwrap_or(body.clone().into()) // `body` を `web_sys::Element` に変換
-            };
 
             // JsValue を配列に変換
             let articles: Array = js_articles.dyn_into().unwrap();
@@ -112,16 +96,14 @@ pub async fn main() -> Result<(), JsValue> {
 
                 let title_element = document.create_element("h2").unwrap();
                 title_element.set_inner_html(&title.as_string().unwrap());
-                target.append_child(&title_element).unwrap();
+                body.append_child(&title_element).unwrap();
 
                 let urls_array: Array = urls.dyn_into().unwrap();
-                let list = document.create_element("ul").unwrap();
                 for url in urls_array.iter() {
                     let list_item = document.create_element("li").unwrap();
                     list_item.set_inner_html(&url.as_string().unwrap());
-                    list.append_child(&list_item).unwrap();
+                    body.append_child(&list_item).unwrap();
                 }
-                target.append_child(&list).unwrap();
             }
         }
         Err(e) => {

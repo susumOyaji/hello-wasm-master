@@ -4,59 +4,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Floating Area with Rust</title>
+    <title>メインコンテンツのフローティング表示</title>
     <style>
-        body {
-            /*display: none;*/
+        body > *{
+            /*display: none; /* bodyの表示を止める */
+           
+          
+            /* 完全に透明にする */
+            font-family: Arial, sans-serif;
+            margin: 20px;
         }
 
-        #floating-area {
+        /* フローティング表示のスタイル */
+        .floating-container {
             display: block;
             position: fixed;
             top: 20px;
             right: 20px;
-            width: 350px;
+            width: 300px;
             max-height: 80%;
             overflow-y: auto;
-            background-color: rgb(0, 0, 0);
+            background-color: white;
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
-          /* h2 のスタイル */
-          #floating-area h1 {
-            display: block;
-            font-size: 18px;
-            color: #f87b07;
-            margin-top: 20px;
-            font-size: 18px;
-        }
 
         /* h2 のスタイル */
-        #floating-area h2 {
+        .floating-container h2,
+        .main-content h2 {
             display: block;
             font-size: 18px;
-            color: #8df505;
+            color: #007bff;
             margin-top: 20px;
-            font-size: 13px;
         }
 
         /* リストのスタイル */
-        #floating-area ul,
+        .floating-container ul,
         .main-content ul {
             list-style-type: none;
             padding-left: 0;
-            font-size: 12px;
         }
 
-        #floating-area li {
+        .floating-container li {
             display: block;
             display: flex;
             align-items: center;
             margin-bottom: 10px;
-            color: #ffffff;
-            font-size: 12px;
+            font-size: 15px;
+        }
+
+        .floating-container input[type="checkbox"] {
+            margin-right: 10px;
         }
 
         /* ボタンのスタイル */
@@ -87,22 +87,37 @@
     </style>
 </head>
 
+<body>
 
+    <!-- メインコンテンツ -->
+    <div class="main-content">
+        <h2>おすすめグルメ</h2>
+        <ul>
+            <li>寿司</li>
+            <li>ラーメン</li>
+            <li>天ぷら</li>
+        </ul>
 
-<!--
-<body data-target="floating-area">
-    <div id="floating-area"></div>
+        <h2>旅行先</h2>
+        <ul>
+            <li>北海道</li>
+            <li>沖縄</li>
+            <li>京都</li>
+        </ul>
 
-<body data-target="body">
-    <div id="floating-area"></div>
+        <h2>映画</h2>
+        <ul>
+            <li>アクション映画</li>
+            <li>ドラマ映画</li>
+            <li>コメディ映画</li>
+        </ul>
+    </div>
 
-data-target がない場合は body に追加
--->
-
-
-<body data-target="floating-area">
-    <div id="floating-area"></div>
-
+    <!-- フローティング表示 -->
+    <div class="floating-container" id="floating-content">
+        
+        <div id="floating-body"></div>
+    </div>
 
     <!-- ボタン -->
     <div class="button-container">
@@ -110,26 +125,30 @@ data-target がない場合は body に追加
         <button onclick="searchCheckedItems()">検索</button>
     </div>
 
+    <h1>Rewards Search Keyword</h1>
+    <div id="h2-list" class="h2-list"></div> <!-- ここに h2 タグのリストを表示 -->
 
     <script type="module">
         import init, { fetch_movie_keywords } from './pkg/hello_wasm.js';
 
-        // 非同期関数内で初期化とデータ挿入を行う
-        async function initialize() {
+        async function run() {
             await init();
-            const wasmData = await fetch_movie_keywords();
-            updateFloatingContentWithWasmData(wasmData); // WASMデータをフローティングエリアに表示
+            //const wasmData = await fetch_movie_keywords();
+            //updateFloatingContentWithWasmData(wasmData); // WASMデータをフローティングエリアに表示
+            updateFloatingContentWithWasmData(await fetch_movie_keywords());
         }
-        initialize();
+
+        run();
 
         function updateFloatingContentWithWasmData(wasmData) {
-            const floatingBody = document.getElementById('floating-area');
-            floatingBody.innerHTML = ''; // フローティングエリアのコンテンツをクリア
+            const floatingBody = document.getElementById('floating-body');
+            floatingBody.innerHTML = ''; // フローティングコンテンツをクリア
 
             // フローティングエリアの先頭に <h1> を追加
+            const floatingContent = document.getElementById('floating-content');
             const h1Element = document.createElement('h1');
             h1Element.textContent = 'Rewards Search Keyword';
-            floatingBody.appendChild(h1Element);
+            floatingContent.insertBefore(h1Element, floatingBody);
 
             const articles = wasmData;
 
@@ -160,9 +179,44 @@ data-target がない場合は body に追加
             });
         }
 
+        function updateFloatingContent() {
+            const floatingBody = document.getElementById('floating-body');
+            floatingBody.innerHTML = ''; // フローティングコンテンツをクリア
+
+            // メインコンテンツ内の h2 と ul を取得
+            const sections = document.querySelectorAll('.main-content h2');
+
+            sections.forEach(h2 => {
+                // h2 見出しを追加
+                const floatingH2 = document.createElement('h2');
+                floatingH2.textContent = h2.textContent;
+                floatingBody.appendChild(floatingH2);
+
+                // 次の兄弟要素が <ul> ならリストとして追加
+                let nextElement = h2.nextElementSibling;
+                if (nextElement && nextElement.tagName === 'UL') {
+                    const floatingUl = document.createElement('ul');
+
+                    nextElement.querySelectorAll('li').forEach(item => {
+                        const li = document.createElement('li');
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        const label = document.createElement('label');
+                        label.textContent = item.textContent;
+
+                        li.appendChild(checkbox);
+                        li.appendChild(label);
+                        floatingUl.appendChild(li);
+                    });
+
+                    floatingBody.appendChild(floatingUl);
+                }
+            });
+        }
+
         function copyCheckedItems() {
             let checkedItems = [];
-            document.querySelectorAll('#floating-area input[type="checkbox"]:checked').forEach(checkbox => {
+            document.querySelectorAll('.floating-container input[type="checkbox"]:checked').forEach(checkbox => {
                 checkedItems.push(checkbox.nextElementSibling.textContent);
             });
 
@@ -178,10 +232,9 @@ data-target がない場合は body に追加
             }
         }
 
-
         function searchCheckedItems() {
             let checkedItems = [];
-            document.querySelectorAll('#floating-area input[type="checkbox"]:checked').forEach(checkbox => {
+            document.querySelectorAll('.floating-container input[type="checkbox"]:checked').forEach(checkbox => {
                 checkedItems.push(checkbox.nextElementSibling.textContent);
             });
 
@@ -200,8 +253,13 @@ data-target がない場合は body に追加
         window.copyCheckedItems = copyCheckedItems;
         window.searchCheckedItems = searchCheckedItems;
 
-
+        // ページ読み込み時にフローティング表示を同期
+        window.onload = () => {
+            updateFloatingContent();
+            run();
+        };
     </script>
+
 </body>
 
 </html>
