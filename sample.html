@@ -1,0 +1,35 @@
+function searchFromInput() {
+    const query = document.getElementById("search-input").value.trim();
+    if (query) {
+        const searchTab = window.open('https://www.bing.com', '_blank');
+        
+        if (searchTab) {
+            // 一定時間後に検索フォームにキーワードを入力し検索開始
+            setTimeout(function() {
+                // タブが読み込まれていることを確認し、検索フォームにキーワードを入力
+                searchTab.postMessage({ query }, '*');
+            }, 3000); // 3秒後に検索開始
+        }
+    } else {
+        alert("検索ワードを入力してください。");
+    }
+}
+
+window.addEventListener('message', function(event) {
+    if (event.data.query) {
+        // 検索フォームにキーワードを入力し、送信
+        const searchBox = document.querySelector('input[name="q"]');
+        searchBox.value = event.data.query;
+        searchBox.form.submit();
+    }
+});
+
+// ボタンクリックで検索開始
+document.getElementById("searchButton").addEventListener("click", searchFromInput);
+
+// Enterキーでも検索開始
+document.getElementById("search-input").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        searchFromInput();
+    }
+});

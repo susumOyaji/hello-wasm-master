@@ -7,8 +7,7 @@
     <title>Floating Area with Rust</title>
     <style>
         body {
-            /*display: none;*/
-            font-size: 12px; /* bodyタグの文字サイズを指定 */
+            font-size: 12px;
         }
 
         #floating-area {
@@ -18,59 +17,79 @@
             right: 20px;
             width: 350px;
             max-height: 80%;
-            overflow-y: auto;
+            overflow-y: hidden;
             background-color: rgb(0, 0, 0);
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
-        #floating-area1 {
-            display: block;
-            position: fixed;
-            top: 20px;
-            right: 420px;
-            width: 350px;
-            max-height: 80%;
-            overflow-y: auto;
-            background-color: rgb(101, 99, 110);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+
+        .floating-header {
+            position: sticky;
+            top: 0;
+            background-color: white;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            z-index: 10;
         }
-          /* h2 のスタイル */
-          #floating-area h1,
-          #floating-area1 h1 {
+
+        /* 検索エリア */
+        .search-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        #search-input {
+            flex-grow: 1;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        #search-button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        #search-button:hover {
+            background-color: #0056b3;
+        }
+
+        .floating-content {
+            overflow-y: auto;
+            max-height: calc(80vh - 60px); /* 80vhからヘッダーの高さを引いた値にする */
+        padding: 10px;
+            padding: 10px;
+        }
+
+        #floating-area h1 {
             display: block;
             font-size: 18px;
             color: #f87b07;
-            margin-top: 20px;
-            font-size: 18px;
         }
 
-        /* h2 のスタイル */
-        #floating-area h2,
-        #floating-area1 h2 {
+        #floating-area h2 {
             display: block;
-            font-size: 18px;
-            color: #8df505;
-            margin-top: 20px;
             font-size: 13px;
+            color: #8df505;
+            margin-top: 10px;
         }
 
-        /* リストのスタイル */
-        #floating-area ul,
-        .main-content ul,
-        #floating-area1 ul {
+        #floating-area ul {
             list-style-type: none;
             padding-left: 0;
             font-size: 12px;
         }
 
-        #floating-area li,
-        #floating-area1 li {
-            display: block;
+        #floating-area li {
             display: flex;
             align-items: center;
             margin-bottom: 10px;
@@ -78,9 +97,7 @@
             font-size: 12px;
         }
 
-        /* ボタンのスタイル */
         .button-container {
-            display: block;
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -89,7 +106,6 @@
         }
 
         .button-container button {
-            display: block;
             padding: 10px 15px;
             font-size: 14px;
             background-color: #007bff;
@@ -100,126 +116,128 @@
         }
 
         .button-container button:hover {
-            display: block;
             background-color: #0056b3;
         }
     </style>
 </head>
 
-
-
-<!--
 <body data-target="floating-area">
-    <div id="floating-area"></div>
+    <div id="floating-area">
+        <div class="floating-header">
+            <h1>Rewards Search Keyword</h1>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="検索ワードを入力" />
+                <button id="search-button">検索</button>
+            </div>
+        </div>
+        <div class="floating-content">
+            <!-- 動的に追加されるリスト -->
+        </div>
+    </div>
 
-<body data-target="body">
-    <div id="floating-area"></div>
-
-data-target がない場合は body に追加
--->
-
-
-<body data-target="floating-area1">
-    <div id="floating-area1"></div>
-
-
-    <!-- ボタン -->
     <div class="button-container">
         <button onclick="copyCheckedItems()">コピー</button>
         <button onclick="searchCheckedItems()">検索</button>
     </div>
 
-
     <script type="module">
         import init, { fetch_movie_keywords } from './pkg/hello_wasm.js';
 
-        // 非同期関数内で初期化とデータ挿入を行う
         async function initialize() {
             await init();
             const wasmData = await fetch_movie_keywords();
-            updateFloatingContentWithWasmData(wasmData); // WASMデータをフローティングエリアに表示
+            updateFloatingContentWithWasmData(wasmData);
         }
         initialize();
 
         function updateFloatingContentWithWasmData(wasmData) {
-            const floatingBody = document.getElementById('floating-area1');
-            floatingBody.innerHTML = ''; // フローティングエリアのコンテンツをクリア
+            const floatingContent = document.querySelector('.floating-content');
+            floatingContent.innerHTML = ''; // リストをクリア
 
-            // フローティングエリアの先頭に <h1> を追加
-            const h1Element = document.createElement('h1');
-            h1Element.textContent = 'Rewards Search Keyword';
-            floatingBody.appendChild(h1Element);
-
-            const articles = wasmData;
-
-            articles.forEach(article => {
-                // タイトルを追加
+            wasmData.forEach((article, index) => {
                 const titleElement = document.createElement('h2');
                 titleElement.textContent = article.title;
-                floatingBody.appendChild(titleElement);
+                floatingContent.appendChild(titleElement);
 
-                // リストを追加
                 const ulElement = document.createElement('ul');
-                article.urls.forEach(url => {
+                article.urls.forEach((url, urlIndex) => {
                     const liElement = document.createElement('li');
 
-                    // チェックボックスを追加
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
-                    liElement.appendChild(checkbox);
+                    checkbox.id = `checkbox-${index}-${urlIndex}`;
 
-                    // URLテキストを追加
                     const label = document.createElement('label');
                     label.textContent = url;
-                    liElement.appendChild(label);
+                    label.setAttribute('for', checkbox.id);
 
+                    liElement.appendChild(checkbox);
+                    liElement.appendChild(label);
                     ulElement.appendChild(liElement);
                 });
-                floatingBody.appendChild(ulElement);
+
+                floatingContent.appendChild(ulElement);
             });
+        }
+
+        function getCheckedItems(targetId) {
+            let checkedItems = [];
+            document.querySelectorAll(`#${targetId} input[type="checkbox"]:checked`).forEach(checkbox => {
+                checkedItems.push(checkbox.nextElementSibling.textContent);
+            });
+            return checkedItems;
         }
 
         function copyCheckedItems() {
-            let checkedItems = [];
-            document.querySelectorAll('#floating-area input[type="checkbox"]:checked').forEach(checkbox => {
-                checkedItems.push(checkbox.nextElementSibling.textContent);
-            });
+            const targetId = document.body.getAttribute("data-target") || "floating-area";
+            const checkedItems = getCheckedItems(targetId);
 
-            if (checkedItems.length > 0) {
-                const textToCopy = checkedItems.join("\n"); // 改行区切りでコピー
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    alert("チェックされた項目をコピーしました:\n" + textToCopy);
-                }).catch(err => {
-                    alert("コピーに失敗しました: " + err);
-                });
-            } else {
-                alert("チェックされた項目がありません。");
+            if (checkedItems.length === 0) {
+                alert("チェックされた項目がありません。少なくとも1つ選択してください。");
+                return;
             }
-        }
 
+            const textToCopy = checkedItems.join("\n");
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert("コピーしました:\n" + textToCopy);
+            }).catch(err => {
+                alert("コピーに失敗しました: " + err);
+            });
+        }
 
         function searchCheckedItems() {
-            let checkedItems = [];
-            document.querySelectorAll('#floating-area input[type="checkbox"]:checked').forEach(checkbox => {
-                checkedItems.push(checkbox.nextElementSibling.textContent);
-            });
+            const targetId = document.body.getAttribute("data-target") || "floating-area";
+            const checkedItems = getCheckedItems(targetId);
 
-            if (checkedItems.length > 0) {
-                checkedItems.forEach(item => {
-                    const query = encodeURIComponent(item);
-                    const searchUrl = `https://www.bing.com/search?q=${query}`;
-                    window.open(searchUrl, '_blank'); // 各項目ごとに新しいタブで検索
-                });
-            } else {
+            if (checkedItems.length === 0) {
                 alert("チェックされた項目がありません。");
+                return;
+            }
+
+            checkedItems.forEach(item => {
+                const query = encodeURIComponent(item);
+                window.open(`https://www.bing.com/search?q=${query}`, '_blank');
+            });
+        }
+
+        document.getElementById("search-button").addEventListener("click", searchFromInput);
+        document.getElementById("search-input").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                searchFromInput();
+            }
+        });
+
+        function searchFromInput() {
+            const query = document.getElementById("search-input").value.trim();
+            if (query) {
+                window.open(`https://www.bing.com/search?q=${encodeURIComponent(query)}`, "_blank");
+            } else {
+                alert("検索ワードを入力してください。");
             }
         }
 
-        // グローバルスコープに登録
         window.copyCheckedItems = copyCheckedItems;
         window.searchCheckedItems = searchCheckedItems;
-
-
     </script>
 </body>
 
