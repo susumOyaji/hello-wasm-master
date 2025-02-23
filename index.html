@@ -200,10 +200,39 @@
             const textToCopy = checkedItems.join("\n");
             navigator.clipboard.writeText(textToCopy).then(() => {
                 alert("コピーしました:\n" + textToCopy);
+        
+                // Bing検索タブを開く（各項目ごとに新規タブを開く）
+                checkedItems.forEach(query => {
+                    // 新しいタブでBing検索を開く（検索ワードは含めない）
+                    const searchTab = window.open("https://www.bing.com/search", "_blank");
+                    // 新しいタブが完全にロードされるのを待つ
+                    searchTab.onload = function() {
+                        // 検索ワードを入力しない場合、検索ボックスに何も設定しない
+                        // ここで検索ボックスに値を入力しない    
+                };
+                // Enterキー入力検出
+                searchInput.addEventListener("keydown", function (e) {
+                    if (e.key === "Enter") {
+                        console.log('Enterキーが押されました');
+                        alert('Enterが押されました。検索開始します。');
+
+                        // 検索ワードをクリア
+                        searchInput.value = '';
+            
+                        // 次のペーストを促す
+                        setTimeout(() => {
+                            alert('次の検索ワードをペーストしてください。');
+                        }, 500); // 500ms 後に次のペーストを促す
+                    }
+                });
+            });
+
+    
             }).catch(err => {
                 alert("コピーに失敗しました: " + err);
             });
         }
+
 
         function searchCheckedItems() {
             const targetId = document.body.getAttribute("data-target") || "floating-area";
@@ -229,6 +258,11 @@
 
         function searchFromInput() {
             const query = document.getElementById("search-input").value.trim();
+            //query = query.replace(/[\r\n]+/g, " "); // 改行をスペースに置換
+            //alert("検索クエリ: " + query); // アラートで表示
+            //console.log("検索クエリ:", query); // コンソールに出力
+            document.body.innerHTML += `<p>検索クエリ: ${query}</p>`; // ページに追加
+
             if (query) {
                 window.open(`https://www.bing.com/search?q=${encodeURIComponent(query)}`, "_blank");
             } else {
